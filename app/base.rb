@@ -1,0 +1,36 @@
+RACK_ENV = ENV["RACK_ENV"] ||= "development"
+ROOT_DIR = File.expand_path("#{File.dirname(__FILE__)}/..") unless defined? ROOT_DIR
+
+def root_path(*args)
+  File.join(ROOT_DIR, *args)
+end
+
+def public_path(*args)
+  root_path('public', *args)
+end
+
+def load_app(files_dir)
+  app_dir = File.join('app', files_dir)
+  root_app_dir = root_path(app_dir)
+  if File.exists?(root_app_dir)
+    Dir[File.join(root_app_dir, "*.rb")].each do |file|
+      require "#{app_dir}/#{File.basename(file, ".rb")}"
+    end
+  end
+end
+
+def load_lib(files_dir=[])
+  lib_dir = File.join('lib', files_dir)
+  root_lib_dir = root_path(lib_dir)
+  if File.exists?(root_lib_dir)
+    Dir[File.join(root_lib_dir, "*.rb")].each do |file|
+      require "#{lib_dir}/#{File.basename(file, ".rb")}"
+    end
+  end
+end
+
+def load_libs
+  load_lib
+end
+
+require './config/env'
